@@ -1,3 +1,3 @@
-/home/oleg/CLionProjects/lab7/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/oleg/CLionProjects/lab7/cmake-build-debug/CMakeFiles/lab7.dir
-/home/oleg/CLionProjects/lab7/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/malol/Documents/GitHub/polynom/cmake-build-debug/CMakeFiles/lab7.dir
+C:/Users/malol/Documents/GitHub/polynom/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/malol/Documents/GitHub/polynom/cmake-build-debug/CMakeFiles/rebuild_cache.dir
