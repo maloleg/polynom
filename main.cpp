@@ -25,6 +25,12 @@ bool operator == (const Polynomial<T> lhs, const Polynomial<T> rhs){
 }
 
 template <typename T>
+bool operator != (const Polynomial<T> lhs, const Polynomial<T> rhs){
+    if (lhs.Pol == rhs.Pol) return 0;
+    else return 1;
+}
+
+template <typename T>
 bool operator == (const Polynomial<T> lhs, T rhs){
     if (lhs.Pol.size() == 1 && lhs.Pol[0].second == 0 && lhs.Pol[0].first == rhs) return 1;
     else return 0;
@@ -64,6 +70,98 @@ Polynomial<T> operator + (const Polynomial<T> lhs, const Polynomial<T> rhs){
 
     return a;
 }
+
+template <typename T>
+Polynomial<T> operator += (Polynomial<T> lhs, Polynomial<T> rhs){
+    std::vector<T> temp;
+    int MDegree = 0;
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        if (lhs.Pol[i].second > MDegree) MDegree = lhs.Pol[i].second;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        if (rhs.Pol[i].second > MDegree) MDegree = rhs.Pol[i].second;
+    }
+    // наверное можно было и проще(
+
+    temp.resize(MDegree + 1);
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        temp[lhs.Pol[i].second] += lhs.Pol[i].first;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        temp[rhs.Pol[i].second] += rhs.Pol[i].first;
+    }
+
+    Polynomial<T> a(temp);
+
+    temp.clear();
+
+    return a;
+}
+
+template <typename T>
+Polynomial<T> operator - (const Polynomial<T> lhs, const Polynomial<T> rhs){
+    std::vector<T> temp;
+    int MDegree = 0;
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        if (lhs.Pol[i].second > MDegree) MDegree = lhs.Pol[i].second;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        if (rhs.Pol[i].second > MDegree) MDegree = rhs.Pol[i].second;
+    }
+    // наверное можно было и проще(
+
+    temp.resize(MDegree + 1);
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        temp[lhs.Pol[i].second] += lhs.Pol[i].first;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        temp[rhs.Pol[i].second] -= rhs.Pol[i].first;
+    }
+
+    Polynomial<T> a(temp);
+
+    temp.clear();
+
+    return a;
+}
+
+template <typename T>
+Polynomial<T> operator -= (Polynomial<T> lhs, const Polynomial<T> rhs){
+    std::vector<T> temp;
+    int MDegree = 0;
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        if (lhs.Pol[i].second > MDegree) MDegree = lhs.Pol[i].second;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        if (rhs.Pol[i].second > MDegree) MDegree = rhs.Pol[i].second;
+    }
+    // наверное можно было и проще(
+
+    temp.resize(MDegree + 1);
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        temp[lhs.Pol[i].second] += lhs.Pol[i].first;
+    }
+    for (int i = 0; i < rhs.Pol.size(); i++){
+        temp[rhs.Pol[i].second] -= rhs.Pol[i].first;
+    }
+
+    Polynomial<T> a(temp);
+
+    temp.clear();
+
+    return a;
+}
+
+template <typename T>
+Polynomial<T> operator *(const Polynomial<T> lhs, const Polynomial<T> rhs){
+}
+
 
 template <typename T>
 class Polynomial {

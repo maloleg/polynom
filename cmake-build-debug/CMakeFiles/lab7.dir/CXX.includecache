@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/malol/Documents/GitHub/polynom/main.cpp
+/home/oleg/polynom-master/main.cpp
 iostream
 -
 vector
