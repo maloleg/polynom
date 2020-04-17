@@ -1,15 +1,6 @@
-<<<<<<< HEAD
-#include "Polynom.hpp"
+#ifndef LAB7_POLYNOM_HPP
+#define LAB7_POLYNOM_HPP
 
-int main(){
-    std::vector<int> b = {1, 2, 0, 4, -5, 0, 7};
-    Polynomial<int> a(b);
-    Polynomial<int> c({1, 1, 2, 2, 1});
-    Polynomial<int> f({0, 0, 0});
-    f = a * c;
-    std::cout << a << std::endl << c << std::endl << f << std::endl << f[3];
-    return 0;
-=======
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -21,12 +12,33 @@ class Polynomial;
 
 template <typename T>
 std::ostream& operator << (std::ostream &out, const Polynomial<T> a){
-    for (int i = a.Pol.size() - 1; i >= 0 ; i--){
-        if (a.Pol[i].first < 0) {out << " - "; if (abs(a.Pol[i].first) != 1)  out << abs(a.Pol[i].first); out << "x^" << a.Pol[i].second;}
-        else
-            if (i != a.Pol.size() - 1) {out << " + "; if (abs(a.Pol[i].first) != 1) out << a.Pol[i].first; out << "x^" << a.Pol[i].second;}
-            else if (abs(a.Pol[i].first) != 1) {out << a.Pol[i].first; out << "x^" << a.Pol[i].second;}
+    if (!a.Pol.empty()) {
+        for (int i = a.Pol.size() - 1; i >= 0; i--) {
+            if (a.Pol[i].first < 0) {
+                out << " - ";
+                if (abs(a.Pol[i].first) != 1) out << abs(a.Pol[i].first);
+                if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
+                else if (a.Pol[i].second != 0) out << "x";
+            }
+            else if (i != a.Pol.size() - 1) {
+                out << " + ";
+                if (abs(a.Pol[i].first) != 1 || abs(a.Pol[i].second) == 0) out << a.Pol[i].first;
+                if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
+                else if (a.Pol[i].second != 0) out << "x";
+            }
+            else if (abs(a.Pol[i].first) != 1) {
+                out << a.Pol[i].first;
+                if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
+                else if (a.Pol[i].second != 0) out << "x";
+            }
+            else {
+                if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
+                else if (a.Pol[i].second != 0) out << "x";
+            }
+        }
     }
+    else out << "this vector is empty";
+    //я хотел красиво и аккуратно всё написать, но разрослось. Зато работает правда-правда!
     return out;
 }
 
@@ -179,7 +191,6 @@ Polynomial<T> operator *=(Polynomial<T>& lhs, T rhs){
     return lhs;
 }
 
-
 template <typename T>
 class Polynomial {
 private:
@@ -210,22 +221,9 @@ public:
     friend Polynomial<T> operator *=<T>(Polynomial& lhs, Polynomial rhs);
     friend Polynomial<T> operator *=<T>(Polynomial& lhs, T rhs);
 
-    void normalize(){
-        std::sort(Pol.begin(), Pol.end(), [](const std::pair<int,int> &a, const std::pair<int,int> &b){return (a.second < b.second);});
-        for (int i = 0; i < Pol.size(); ++i){
-            int j = i + 1;
-
-            while (j < Pol.size() && Pol[j].second == Pol[i].second){
-                Pol[i].first += Pol[j].first;
-                Pol.erase(Pol.begin() + j);
-            }
-        }
-        for (int i = 0; i < Pol.size(); ++i){
-            if (Pol[i].first == 0){
-                Pol.erase(Pol.begin() + i);
-                --i;
-            }
-        }
+    T operator [](int indx){
+        if (indx > this->Degree()) return 0;
+        else return Pol[indx].first;
     }
 
     Polynomial(std::vector<T> b){
@@ -251,14 +249,32 @@ public:
             }
         }
     }
+
+    void normalize(){
+        std::sort(Pol.begin(), Pol.end(), [](const std::pair<int,int> &a, const std::pair<int,int> &b){return (a.second < b.second);});
+        for (int i = 0; i < Pol.size(); ++i){
+            int j = i + 1;
+
+            while (j < Pol.size() && Pol[j].second == Pol[i].second){
+                Pol[i].first += Pol[j].first;
+                Pol.erase(Pol.begin() + j);
+            }
+        }
+        for (int i = 0; i < Pol.size(); ++i){
+            if (Pol[i].first == 0){
+                Pol.erase(Pol.begin() + i);
+                --i;
+            }
+        }
+    }
+
+    int Degree(){
+        this->normalize();
+        if (!Pol.empty()) return Pol[Pol.size() - 1].second;
+        else return -1;
+    }
 };
 
-int main(){
-    std::vector<int> b = {1, 2, 0, 4, -5, 0, 7};
-    Polynomial<int> a(b);
-    Polynomial<int> c({1, 1, 2, 2, 1});
-    //a = a * c;
-    std::cout << a << std::endl << c << std::endl << a * c;
-    return 0;
->>>>>>> 406412490b4995ad274645763692a53be8fdc59f
-}
+
+
+#endif //LAB7_POLYNOM_HPP
