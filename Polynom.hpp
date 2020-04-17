@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
+#include "math.h"
 
 template <typename T>
 class Polynomial;
@@ -15,8 +16,9 @@ std::ostream& operator << (std::ostream &out, const Polynomial<T> a){
     if (!a.Pol.empty()) {
         for (int i = a.Pol.size() - 1; i >= 0; i--) {
             if (a.Pol[i].first < 0) {
-                out << " - ";
-                if (abs(a.Pol[i].first) != 1) out << abs(a.Pol[i].first);
+                if (i != a.Pol.size() - 1) out << " - ";
+                else out << "-";
+                if (abs(a.Pol[i].first) != 1 || a.Pol[i].second == 0) out << abs(a.Pol[i].first);
                 if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
                 else if (a.Pol[i].second != 0) out << "x";
             }
@@ -37,7 +39,7 @@ std::ostream& operator << (std::ostream &out, const Polynomial<T> a){
             }
         }
     }
-    else out << "this vector is empty";
+    else out << "0";
     //я хотел красиво и аккуратно всё написать, но разрослось. Зато работает правда-правда!
     return out;
 }
@@ -223,10 +225,7 @@ public:
     friend Polynomial<T> operator *=<T>(Polynomial& lhs, Polynomial rhs);
     friend Polynomial<T> operator *=<T>(Polynomial& lhs, T rhs);
 
-    T operator [](int indx){
-        if (indx > this->Degree()) return 0;
-        else return Pol[indx].first;
-    }
+
 
     Polynomial(std::vector<T> b){
         Pol.clear();
@@ -270,10 +269,23 @@ public:
         }
     }
 
-    int Degree(){
+    const int Degree(){
         this->normalize();
         if (!Pol.empty()) return Pol[Pol.size() - 1].second;
         else return -1;
+    }
+
+    const T operator [](int indx){
+        if (indx > this->Degree()) return 0;
+        else return Pol[indx].first;
+    }
+
+    const T operator ()(int indx){
+        T temp = 0;
+        for (int i = 0; i < Pol.size(); i++){
+            temp += Pol[i].first*pow(indx, Pol[i].second);
+        }
+        return temp;
     }
 };
 
