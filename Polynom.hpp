@@ -110,12 +110,12 @@ Polynomial<T> operator -=(Polynomial<T>& lhs, T rhs){
 
 template <typename T>
 bool operator != (T lhs, const Polynomial<T> rhs){
-    return (rhs.pol.size() != 1 || rhs.pol[0].first != lhs);
+    return (rhs.Pol.size() != 1 || rhs.Pol[0].first != lhs);
 }
 
 template <typename T>
 bool operator != (const Polynomial<T> lhs, T rhs){
-    return (lhs.pol.size() != 1 || lhs.pol[0].first != rhs);
+    return (lhs.Pol.size() != 1 || lhs.Pol[0].first != rhs);
 }
 
 template <typename T>
@@ -180,7 +180,9 @@ Polynomial<T> operator *(Polynomial<T>& lhs, T rhs){
 
 template <typename T>
 Polynomial<T> operator *=(Polynomial<T>& lhs, Polynomial<T> rhs){
+ lhs = lhs * rhs;
 
+ return lhs;
 }
 
 template <typename T>
