@@ -84,10 +84,10 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/oleg/CLionProjects/polynom-master/Polynom.hpp">
+		<Unit filename="/home/oleg/CLionProjects/polynom-master/Ltests.cpp">
 			<Option target="lab7"/>
 		</Unit>
-		<Unit filename="/home/oleg/CLionProjects/polynom-master/main.cpp">
+		<Unit filename="/home/oleg/CLionProjects/polynom-master/Polynom.hpp">
 			<Option target="lab7"/>
 		</Unit>
 		<Unit filename="/home/oleg/CLionProjects/polynom-master/CMakeLists.txt">

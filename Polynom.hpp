@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
+#include <unistd.h>
 #include "math.h"
 
 template <typename T>
@@ -36,6 +37,7 @@ std::ostream& operator << (std::ostream &out, const Polynomial<T> a){
             else {
                 if (a.Pol[i].second != 0 && a.Pol[i].second != 1) out << "x^" << a.Pol[i].second;
                 else if (a.Pol[i].second != 0) out << "x";
+                    else out << a.Pol[i].first;
             }
         }
     }
@@ -45,25 +47,25 @@ std::ostream& operator << (std::ostream &out, const Polynomial<T> a){
 }
 
 template <typename T>
-bool operator == (const Polynomial<T> lhs, const Polynomial<T> rhs){
+const bool operator == (const Polynomial<T> lhs, const Polynomial<T> rhs){
     if (lhs.Pol == rhs.Pol) return 1;
     else return 0;
 }
 
 template <typename T>
-bool operator != (const Polynomial<T> lhs, const Polynomial<T> rhs){
+const bool operator != (const Polynomial<T> lhs, const Polynomial<T> rhs){
     if (lhs.Pol == rhs.Pol) return 0;
     else return 1;
 }
 
 template <typename T>
-bool operator == (const Polynomial<T> lhs, T rhs){
+const bool operator == (const Polynomial<T> lhs, T rhs){
     if (lhs.Pol.size() == 1 && lhs.Pol[0].second == 0 && lhs.Pol[0].first == rhs) return 1;
     else return 0;
 }
 
 template <typename T>
-bool operator == (T lhs, const Polynomial<T> rhs){
+const bool operator == (T& lhs, const Polynomial<T>& rhs){
     if (rhs.Pol.size() == 1 && rhs.Pol[0].second == 0 && rhs.Pol[0].first == lhs) return 1;
     else return 0;
 }
@@ -117,13 +119,15 @@ Polynomial<T> operator -=(Polynomial<T>& lhs, const T& rhs){
 }
 
 template <typename T>
-bool operator != (T lhs, const Polynomial<T> rhs){
-    return (rhs.Pol.size() != 1 || rhs.Pol[0].first != lhs);
+const bool operator != (const T& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp(lhs);
+    return (rhs != temp);
 }
 
 template <typename T>
-bool operator != (const Polynomial<T> lhs, T rhs){
-    return (lhs.Pol.size() != 1 || lhs.Pol[0].first != rhs);
+const bool operator != (const Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
+    return (lhs != temp);
 }
 
 template <typename T>
@@ -229,39 +233,42 @@ Polynomial<T> operator & (Polynomial<T> lhs, Polynomial<T> rhs){
 }
 
 template <typename T>
-Polynomial<T> operator %(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator %(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> q = lhs;
+    Polynomial<T> p = rhs;
+
+    return q - (q/p) * p;
+}
+
+template <typename T>
+const Polynomial<T> operator /(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> q(lhs);
-    Polynomial<T> p(std::vector<T> {0, 1});
-    while (q.Degree() > rhs.Degree()){
-        q -= ((q[q.Degree()])/(rhs[rhs.Degree()]))*(rhs * pow(p, (q.Degree() - rhs.Degree())));
+    Polynomial<T> p(0);
+    Polynomial<T> temp(rhs); //костыль, иначе ругается на то, что я якобы что-то изменяю в rhs.Degree, а метод константный :(
+    Polynomial<T> x(std::vector<T> {0, 1});
+
+    while (q.Degree() >= temp.Degree() && q != (T) 0){
+        p += pow2(x, q.Degree()-temp.Degree()) * (((T)q[q.Degree()])/((T)temp[temp.Degree()]));
+        q -= temp*pow2(x, q.Degree()-temp.Degree()) *(((T)q[q.Degree()])/((T)temp[temp.Degree()]));
+
+        //std::cout << "!" << q << std::endl << "!" << p << std::endl;
+
+        //sleep(1);
     }
-    return q;
+    return p;
 }
 
 template <typename T>
-Polynomial<T> operator /(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
-    Polynomial<T> temp(lhs);
-    Polynomial<T> temp2(0);
-
-    while (temp != 0){
-        temp -= rhs*temp.Degree();
-        temp2 += rhs*temp.Degree();
-    }
-
-    return temp2;
-}
-
-template <typename T>
-Polynomial<T> operator ,(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator ,(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp1 = lhs;
     Polynomial<T> temp2 = rhs;
 
-    while (temp1 != temp2){
-        temp1 -= (temp2/temp1) * temp1;
-        if (temp1 == temp2) break;
-        temp2 -= (temp1/temp2) * temp2;
-    }
+    if (temp2.Degree() > temp1.Degree()) std::swap(temp1, temp2);
 
+    while (temp2 != (T) 0){
+        temp1 = temp1%temp2;
+        std::swap(temp1, temp2);
+    }
     return temp1;
 }
 
@@ -272,16 +279,13 @@ private:
 
 public:
     friend std::ostream& operator <<<T> (std::ostream &out, const Polynomial a);
-    friend bool operator ==<T> (const Polynomial lhs, const Polynomial rhs);
-    friend bool operator !=<T> (const Polynomial lhs, const Polynomial rhs);
-    friend bool operator !=<T> (T lhs, const Polynomial rhs);
-    friend bool operator !=<T> (const Polynomial lhs, T rhs);
-    friend bool operator ==<T> (const Polynomial lhs, T rhs);
-    friend bool operator ==<T> (T lhs, const Polynomial rhs);
-    friend bool operator ==<T> (T lhs, const Polynomial rhs);
+    friend const bool operator ==<T> (const Polynomial lhs, const Polynomial rhs);
+    friend const bool operator !=<T> (const Polynomial lhs, const Polynomial rhs);
+    friend const bool operator ==<T> (const Polynomial lhs, T rhs);
     friend Polynomial<T> operator -=<T> (Polynomial& lhs, const Polynomial& rhs);
     friend Polynomial<T> operator +=<T> (Polynomial<T>& lhs, const Polynomial<T>& rhs);
     friend const Polynomial<T> operator *<T>(const Polynomial& lhs, const Polynomial& rhs);
+    friend const bool operator ==<T>(T& lhs, const Polynomial<T>& rhs);
 
     friend Polynomial<T> operator &<T>(Polynomial lhs, Polynomial rhs); //Я так понял что этот метод должен быть контанстным
 
@@ -322,16 +326,18 @@ public:
             }
         }
         for (int i = 0; i < Pol.size(); ++i){
-            if (Pol[i].first == 0){
+            if (abs(Pol[i].first) == 0){
                 Pol.erase(Pol.begin() + i);
                 --i;
             }
         }
+        if (Pol.empty()) Pol.push_back(std::make_pair(0, 0));
     }
 
     const int Degree(){
-        this->normalize();
-        if (!Pol.empty()) return Pol[Pol.size() - 1].second;
+        //this->normalize();
+        //std::cout << (*this == (T) 0) << std::endl;
+        if (!Pol.empty() && *this != (T) 0) return Pol[Pol.size() - 1].second;
         else return -1;
     }
 
@@ -339,7 +345,7 @@ public:
         T temp;
         bool check = false;
 
-        this->normalize();
+        //this->normalize();
         if (indx > this->Degree()) return 0;
         else
             for (int i = 0; i < Pol.size(); i++){
@@ -347,7 +353,6 @@ public:
             }
         if (check) return temp;
         else return 0;
-
     }
 
     const T operator ()(const T indx){
@@ -357,6 +362,11 @@ public:
         }
         return temp;
     }
+
+    const auto begin() {return Pol.begin();};
+    const auto end() {return Pol.end();};
+
+
 };
 
 

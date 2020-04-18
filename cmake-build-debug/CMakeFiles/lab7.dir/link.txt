@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/lab7.dir/main.cpp.o  -o lab7 
+/usr/bin/c++  -g   CMakeFiles/lab7.dir/Ltests.cpp.o  -o lab7 

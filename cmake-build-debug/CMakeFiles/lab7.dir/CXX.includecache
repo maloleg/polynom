@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/oleg/CLionProjects/polynom-master/Ltests.cpp
+Polynom.hpp
+/home/oleg/CLionProjects/polynom-master/Polynom.hpp
+
 /home/oleg/CLionProjects/polynom-master/Polynom.hpp
 iostream
 -
@@ -17,10 +21,8 @@ cstdint
 -
 iterator
 -
+unistd.h
+-
 math.h
 /home/oleg/CLionProjects/polynom-master/math.h
-
-/home/oleg/CLionProjects/polynom-master/main.cpp
-Polynom.hpp
-/home/oleg/CLionProjects/polynom-master/Polynom.hpp
 

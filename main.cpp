@@ -5,7 +5,13 @@ int main(){
     Polynomial<int> a(b);
     Polynomial<int> c({4, 1, 2, 2, 1});
     Polynomial<int> f(-1);
+    Polynomial<int> g(1);
+
+    Polynomial<double> d1((std::vector<double>){1, 3, 3, 1});
+    Polynomial<double> d2((std::vector<double>){1, 1});
+    Polynomial<double> d3((std::vector<double>){-2});
+    //std::cout << g << std::endl;
     //a *= c;
-    if (2 != a) std::cout << a << std::endl << c << std::endl  << (a&c) << std::endl << (a&c)(0) << std::endl;
+    if (a != 2) std::cout << d1 << std::endl << d2 << std::endl  << (d2/d3) << std::endl << (d1,d2) << std::endl;
     return 0;
 }

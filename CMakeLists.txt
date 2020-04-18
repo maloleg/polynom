@@ -3,4 +3,4 @@ project(lab7)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(lab7 main.cpp Polynom.hpp)
+add_executable(lab7 Ltests.cpp Polynom.hpp)
