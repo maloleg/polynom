@@ -69,13 +69,14 @@ bool operator == (T lhs, const Polynomial<T> rhs){
 }
 
 template <typename T>
-Polynomial<T> operator + (Polynomial<T> lhs, const Polynomial<T> rhs){
-    lhs += rhs;
-    return lhs;
+Polynomial<T> operator + (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp = lhs;
+    temp += rhs;
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator += (Polynomial<T>& lhs, Polynomial<T> rhs){
+Polynomial<T> operator += (Polynomial<T>& lhs, const Polynomial<T>& rhs){
     for (int i = 0; i < rhs.Pol.size(); i++){
         lhs.Pol.push_back(rhs.Pol[i]);
     }
@@ -85,20 +86,23 @@ Polynomial<T> operator += (Polynomial<T>& lhs, Polynomial<T> rhs){
 }
 
 template <typename T>
-Polynomial<T> operator += (Polynomial<T>& lhs, T rhs){
-    lhs.Pol[0].first += rhs;
-}
-
-template <typename T>
-Polynomial<T> operator - (Polynomial<T>& lhs, Polynomial<T> rhs){
-    lhs += rhs;
+Polynomial<T> operator += (Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
+    temp += lhs;
     return lhs;
 }
 
 template <typename T>
-Polynomial<T> operator -= (Polynomial<T>& lhs, Polynomial<T> rhs){
+Polynomial<T> operator - (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp = lhs;
+    temp -= rhs;
+    return temp;
+}
+
+template <typename T>
+Polynomial<T> operator -= (Polynomial<T>& lhs, const Polynomial<T>& rhs){
     for (int i = 0; i < rhs.Pol.size(); i++){
-        lhs.Pol.push_back(-rhs.Pol[i]);
+        lhs.Pol.push_back(std::make_pair(-rhs.Pol[i].first, rhs.Pol[i].second));
     }
     lhs.normalize();
 
@@ -106,8 +110,10 @@ Polynomial<T> operator -= (Polynomial<T>& lhs, Polynomial<T> rhs){
 }
 
 template <typename T>
-Polynomial<T> operator -=(Polynomial<T>& lhs, T rhs){
-    lhs.Pol[0].first -= rhs;
+Polynomial<T> operator -=(Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
+    temp -= lhs;
+    return temp;
 }
 
 template <typename T>
@@ -121,36 +127,43 @@ bool operator != (const Polynomial<T> lhs, T rhs){
 }
 
 template <typename T>
-Polynomial<T> operator + (Polynomial<T> lhs, T rhs){
-    lhs[0].first += rhs;
+Polynomial<T> operator + (const Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
 
-    return lhs;
+    temp += lhs;
 
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator +(T lhs, Polynomial<T> rhs){
-    rhs[0].first += lhs;
+Polynomial<T> operator +(const T& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp(lhs);
 
-    return rhs;
+    temp += rhs;
+
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator -(T lhs, Polynomial<T>& rhs){
-    rhs[0].first -= lhs;
+Polynomial<T> operator -(const T& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp(lhs);
 
-    return rhs;
+    temp = rhs - temp;
+
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator - (Polynomial<T>& lhs, T rhs){
-    lhs[0].first -= rhs;
+Polynomial<T> operator - (const Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
 
-    return lhs;
+    temp = lhs - temp;
+
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator *(Polynomial<T>& lhs, const Polynomial<T> rhs){
+Polynomial<T> const operator *(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp(0);
     temp.Pol.clear();
 
@@ -165,34 +178,91 @@ Polynomial<T> operator *(Polynomial<T>& lhs, const Polynomial<T> rhs){
 }
 
 template <typename T>
-Polynomial<T> operator *(T lhs, Polynomial<T>& rhs){
-    for (int i = 0; i < rhs.Pol.size(); i++){
-        rhs.Pol[i].first *= lhs;
-    }
-    return rhs;
+const Polynomial<T> operator *(const T& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp(lhs);
+    temp = temp * rhs;
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator *(Polynomial<T>& lhs, T rhs){
-    for (int i = 0; i < lhs.Pol.size(); i++){
-        lhs.Pol[i].first *= rhs;
-    }
-    return lhs;
+const Polynomial<T> operator *(const Polynomial<T>& lhs, const T& rhs){
+    Polynomial<T> temp(rhs);
+    temp = temp * lhs;
+    return temp;
 }
 
 template <typename T>
-Polynomial<T> operator *=(Polynomial<T>& lhs, Polynomial<T> rhs){
+Polynomial<T> operator *=(Polynomial<T>& lhs, const Polynomial<T>& rhs){
  lhs = lhs * rhs;
-
  return lhs;
 }
 
 template <typename T>
-Polynomial<T> operator *=(Polynomial<T>& lhs, T rhs){
-    for (int i = 0; i < lhs.Pol.size(); i++){
-        lhs.Pol[i].first *= rhs;
-    }
+Polynomial<T> operator *=(Polynomial<T>& lhs, const T& rhs){
+    lhs = lhs * rhs;
     return lhs;
+}
+
+template<typename T>
+const Polynomial<T> pow2(Polynomial<T> lhs, int rhs){
+    Polynomial<T> temp(1);
+
+    for (int i = 0; i < rhs; i++){
+        temp *= lhs;
+    }
+    temp.normalize();
+
+    return temp;
+}
+
+
+template<typename T>
+Polynomial<T> operator & (Polynomial<T> lhs, Polynomial<T> rhs){
+    Polynomial<T> temp((std::vector<T>) {});
+
+    for (int i = 0; i < lhs.Pol.size(); i++){
+        temp += (pow2(rhs, lhs.Pol[i].second) * lhs.Pol[i].first);
+    }
+    temp.normalize();
+
+    return temp;
+}
+
+template <typename T>
+Polynomial<T> operator %(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> q(lhs);
+    Polynomial<T> p(std::vector<T> {0, 1});
+    while (q.Degree() > rhs.Degree()){
+        q -= ((q[q.Degree()])/(rhs[rhs.Degree()]))*(rhs * pow(p, (q.Degree() - rhs.Degree())));
+    }
+    return q;
+}
+
+template <typename T>
+Polynomial<T> operator /(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp(lhs);
+    Polynomial<T> temp2(0);
+
+    while (temp != 0){
+        temp -= rhs*temp.Degree();
+        temp2 += rhs*temp.Degree();
+    }
+
+    return temp2;
+}
+
+template <typename T>
+Polynomial<T> operator ,(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+    Polynomial<T> temp1 = lhs;
+    Polynomial<T> temp2 = rhs;
+
+    while (temp1 != temp2){
+        temp1 -= (temp2/temp1) * temp1;
+        if (temp1 == temp2) break;
+        temp2 -= (temp1/temp2) * temp2;
+    }
+
+    return temp1;
 }
 
 template <typename T>
@@ -209,23 +279,13 @@ public:
     friend bool operator ==<T> (const Polynomial lhs, T rhs);
     friend bool operator ==<T> (T lhs, const Polynomial rhs);
     friend bool operator ==<T> (T lhs, const Polynomial rhs);
-    friend Polynomial<T> operator +<T> (const Polynomial lhs, T rhs);
-    friend Polynomial<T> operator +<T> (T lhs, const Polynomial rhs);
-    friend Polynomial<T> operator +<T> (Polynomial lhs, const Polynomial rhs);
-    friend Polynomial<T> operator +=<T> (Polynomial& lhs, Polynomial rhs);
-    friend Polynomial<T> operator +=<T> (Polynomial& lhs, T rhs);
-    friend Polynomial<T> operator -<T> (Polynomial& lhs, Polynomial rhs);
-    friend Polynomial<T> operator -<T> (T lhs, Polynomial& rhs);
-    friend Polynomial<T> operator -<T> (Polynomial& lhs, T rhs);
-    friend Polynomial<T> operator -=<T> (Polynomial& lhs, Polynomial rhs);
-    friend Polynomial<T> operator -=<T> (Polynomial& lhs, T rhs);
-    friend Polynomial<T> operator *<T>( Polynomial& lhs, const Polynomial rhs);
-    friend Polynomial<T> operator *<T>(T lhs, Polynomial& rhs);
-    friend Polynomial<T> operator *<T>(Polynomial& lhs, T rhs);
-    friend Polynomial<T> operator *=<T>(Polynomial& lhs, Polynomial rhs);
-    friend Polynomial<T> operator *=<T>(Polynomial& lhs, T rhs);
+    friend Polynomial<T> operator -=<T> (Polynomial& lhs, const Polynomial& rhs);
+    friend Polynomial<T> operator +=<T> (Polynomial<T>& lhs, const Polynomial<T>& rhs);
+    friend const Polynomial<T> operator *<T>(const Polynomial& lhs, const Polynomial& rhs);
 
+    friend Polynomial<T> operator &<T>(Polynomial lhs, Polynomial rhs); //Я так понял что этот метод должен быть контанстным
 
+    const Polynomial<T> pow2(Polynomial<T> lhs, int rhs);
 
     Polynomial(std::vector<T> b){
         Pol.clear();
@@ -276,14 +336,24 @@ public:
     }
 
     const T operator [](int indx){
+        T temp;
+        bool check = false;
+
+        this->normalize();
         if (indx > this->Degree()) return 0;
-        else return Pol[indx].first;
+        else
+            for (int i = 0; i < Pol.size(); i++){
+             if (Pol[i].second == indx) {check = true; temp = Pol[i].first;}
+            }
+        if (check) return temp;
+        else return 0;
+
     }
 
-    const T operator ()(int indx){
+    const T operator ()(const T indx){
         T temp = 0;
         for (int i = 0; i < Pol.size(); i++){
-            temp += Pol[i].first*pow(indx, Pol[i].second);
+            temp += (Pol[i].first * pow(indx, Pol[i].second));
         }
         return temp;
     }
