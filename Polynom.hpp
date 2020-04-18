@@ -1,3 +1,7 @@
+
+//https://github.com/maloleg/polynom
+//Если вам будет так удобнее, весь проект там.
+
 #ifndef LAB7_POLYNOM_HPP
 #define LAB7_POLYNOM_HPP
 
@@ -71,7 +75,7 @@ const bool operator == (T& lhs, const Polynomial<T>& rhs){
 }
 
 template <typename T>
-Polynomial<T> operator + (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator + (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp = lhs;
     temp += rhs;
     return temp;
@@ -83,7 +87,6 @@ Polynomial<T> operator += (Polynomial<T>& lhs, const Polynomial<T>& rhs){
         lhs.Pol.push_back(rhs.Pol[i]);
     }
     lhs.normalize();
-
     return lhs;
 }
 
@@ -95,7 +98,7 @@ Polynomial<T> operator += (Polynomial<T>& lhs, const T& rhs){
 }
 
 template <typename T>
-Polynomial<T> operator - (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator - (const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp = lhs;
     temp -= rhs;
     return temp;
@@ -107,7 +110,6 @@ Polynomial<T> operator -= (Polynomial<T>& lhs, const Polynomial<T>& rhs){
         lhs.Pol.push_back(std::make_pair(-rhs.Pol[i].first, rhs.Pol[i].second));
     }
     lhs.normalize();
-
     return lhs;
 }
 
@@ -131,53 +133,43 @@ const bool operator != (const Polynomial<T>& lhs, const T& rhs){
 }
 
 template <typename T>
-Polynomial<T> operator + (const Polynomial<T>& lhs, const T& rhs){
+const Polynomial<T> operator + (const Polynomial<T>& lhs, const T& rhs){
     Polynomial<T> temp(rhs);
-
     temp += lhs;
-
     return temp;
 }
 
 template <typename T>
-Polynomial<T> operator +(const T& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator +(const T& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp(lhs);
-
     temp += rhs;
-
     return temp;
 }
 
 template <typename T>
-Polynomial<T> operator -(const T& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator -(const T& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp(lhs);
-
     temp = rhs - temp;
-
     return temp;
 }
 
 template <typename T>
-Polynomial<T> operator - (const Polynomial<T>& lhs, const T& rhs){
+const Polynomial<T> operator - (const Polynomial<T>& lhs, const T& rhs){
     Polynomial<T> temp(rhs);
-
     temp = lhs - temp;
-
     return temp;
 }
 
 template <typename T>
-Polynomial<T> const operator *(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
+const Polynomial<T> operator *(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> temp(0);
     temp.Pol.clear();
-
     for (int i = 0; i < lhs.Pol.size(); i++){
         for (int j = 0; j < rhs.Pol.size(); j++){
             temp.Pol.push_back(std::make_pair(lhs.Pol[i].first*rhs.Pol[j].first, lhs.Pol[i].second+rhs.Pol[j].second));
         }
     }
     temp.normalize();
-
     return temp;
 }
 
@@ -210,25 +202,20 @@ Polynomial<T> operator *=(Polynomial<T>& lhs, const T& rhs){
 template<typename T>
 const Polynomial<T> pow2(Polynomial<T> lhs, int rhs){
     Polynomial<T> temp(1);
-
     for (int i = 0; i < rhs; i++){
         temp *= lhs;
     }
     temp.normalize();
-
     return temp;
 }
-
 
 template<typename T>
 Polynomial<T> operator & (Polynomial<T> lhs, Polynomial<T> rhs){
     Polynomial<T> temp((std::vector<T>) {});
-
     for (int i = 0; i < lhs.Pol.size(); i++){
         temp += (pow2(rhs, lhs.Pol[i].second) * lhs.Pol[i].first);
     }
     temp.normalize();
-
     return temp;
 }
 
@@ -236,7 +223,6 @@ template <typename T>
 const Polynomial<T> operator %(const Polynomial<T>& lhs, const Polynomial<T>& rhs){
     Polynomial<T> q = lhs;
     Polynomial<T> p = rhs;
-
     return q - (q/p) * p;
 }
 
@@ -250,10 +236,6 @@ const Polynomial<T> operator /(const Polynomial<T>& lhs, const Polynomial<T>& rh
     while (q.Degree() >= temp.Degree() && q != (T) 0){
         p += pow2(x, q.Degree()-temp.Degree()) * (((T)q[q.Degree()])/((T)temp[temp.Degree()]));
         q -= temp*pow2(x, q.Degree()-temp.Degree()) *(((T)q[q.Degree()])/((T)temp[temp.Degree()]));
-
-        //std::cout << "!" << q << std::endl << "!" << p << std::endl;
-
-        //sleep(1);
     }
     return p;
 }
@@ -335,8 +317,6 @@ public:
     }
 
     const int Degree(){
-        //this->normalize();
-        //std::cout << (*this == (T) 0) << std::endl;
         if (!Pol.empty() && *this != (T) 0) return Pol[Pol.size() - 1].second;
         else return -1;
     }
@@ -345,7 +325,6 @@ public:
         T temp;
         bool check = false;
 
-        //this->normalize();
         if (indx > this->Degree()) return 0;
         else
             for (int i = 0; i < Pol.size(); i++){
@@ -365,8 +344,6 @@ public:
 
     const auto begin() {return Pol.begin();};
     const auto end() {return Pol.end();};
-
-
 };
 
 
